@@ -11,8 +11,8 @@ const playlists = {
     { title: "Echoes of Silence", artist: "Lonely Strings", cover: "/sad2.jpg" },
   ],
   chill: [
-    { title: "Night Drive", artist: "LoFi Wave", cover: "/chill1.jpg" },
-    { title: "Cloud Surfing", artist: "Dreamstate", cover: "/chill2.jpg" },
+    { title: "Night Drive", artist: "LoFi Wave", cover: "/chill1.jpeg" },
+    { title: "Cloud Surfing", artist: "Dreamstate", cover: "/chill2.jpeg" },
   ],
 };
 
