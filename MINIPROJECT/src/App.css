@@ -36,7 +36,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding-top: 80px; /* To account for fixed header */
+  padding-top: 80px; /* so content doesn't hide behind header */
 }
 
 .container {
@@ -61,7 +61,7 @@ h1 {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Form Styles */
+/* Mood Form */
 .mood-form {
   display: flex;
   justify-content: center;
@@ -77,7 +77,6 @@ h1 {
   width: 60%;
   max-width: 300px;
   font-size: 1rem;
-  outline: none;
   background-color: #1a2733;
   color: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -86,6 +85,7 @@ h1 {
 
 .mood-form input:focus {
   transform: scale(1.02);
+  outline: none;
 }
 
 .mood-form button {
@@ -163,6 +163,22 @@ h1 {
   color: #d3d3d3;
 }
 
+.song-card button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: white;
+  color: #333;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.song-card button:hover {
+  background-color: #ddd;
+}
+
 /* No Results Text */
 .no-results {
   color: #bbb;
@@ -217,7 +233,6 @@ h1 {
   border-radius: 8px;
   border: none;
   font-size: 1rem;
-  outline: none;
   background-color: #1a2733;
   color: white;
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./App.css";
 
 const defaultPlaylists = {
@@ -7,13 +7,13 @@ const defaultPlaylists = {
       title: "Sunshine Vibes",
       artist: "The Brights",
       cover: "happy1.jpg",
-      audio: "song1.mp3"
+      audio: "song1.mp3",
     },
     {
       title: "Feel Good Flow",
       artist: "Joy Ride",
       cover: "happy2.jpg",
-      audio: "song2.mp3"
+      audio: "song2.mp3",
     },
   ],
   sad: [
@@ -21,13 +21,13 @@ const defaultPlaylists = {
       title: "Blue Rain",
       artist: "Mellow Tones",
       cover: "sad1.jpg",
-      audio: "song3.mp3"
+      audio: "song3.mp3",
     },
     {
       title: "Echoes of Silence",
       artist: "Lonely Strings",
       cover: "sad2.jpg",
-      audio: "song4.mp3"
+      audio: "song4.mp3",
     },
   ],
   chill: [
@@ -35,48 +35,55 @@ const defaultPlaylists = {
       title: "Night Drive",
       artist: "LoFi Wave",
       cover: "chill1.jpg",
-      audio: "song5.mp3"
+      audio: "song5.mp3",
     },
     {
       title: "Cloud Surfing",
       artist: "Dreamstate",
       cover: "chill2.jpg",
-      audio: "song6.mp3"
+      audio: "song6.mp3",
     },
   ],
 };
 
 function App() {
-  // State for mood and playlist display
   const [mood, setMood] = useState("");
   const [playlist, setPlaylist] = useState([]);
-  
-  // State for custom playlists (each mood can have custom songs)
   const [customPlaylists, setCustomPlaylists] = useState({});
-  
-  // Modal state for custom playlist creation
   const [showModal, setShowModal] = useState(false);
-  
-  // Custom playlist form states
   const [customMood, setCustomMood] = useState("");
   const [songTitle, setSongTitle] = useState("");
   const [songArtist, setSongArtist] = useState("");
   const [songCover, setSongCover] = useState("");
   const [songAudio, setSongAudio] = useState("");
 
+  // Audio player setup
+  const audioRef = useRef(null);
+  const [playingIndex, setPlayingIndex] = useState(null);
+
+  // Generate the playlist: custom songs override defaults if present
   const handleSubmit = (e) => {
     e.preventDefault();
-    const lowerMood = mood.toLowerCase();
-    // Check for custom songs first; if none, use default
+    const lowerMood = mood.toLowerCase().trim();
+    if (!lowerMood) return;
+
     const custom = customPlaylists[lowerMood] || [];
     const def = defaultPlaylists[lowerMood] || [];
     const combined = custom.length ? custom : def;
     setPlaylist(combined);
+    // Stop any currently playing track
+    if (audioRef.current) {
+      audioRef.current.pause();
+      setPlayingIndex(null);
+    }
   };
 
+  // Toggle custom playlist modal submission
   const handleCustomSubmit = (e) => {
     e.preventDefault();
-    const lowerMood = customMood.toLowerCase();
+    const lowerMood = customMood.toLowerCase().trim();
+    if (!lowerMood) return;
+    
     const newSong = {
       title: songTitle,
       artist: songArtist,
@@ -88,8 +95,8 @@ function App() {
       const prevSongs = prev[lowerMood] || [];
       return { ...prev, [lowerMood]: [...prevSongs, newSong] };
     });
-    
-    // Reset custom playlist form states
+
+    // Reset form
     setCustomMood("");
     setSongTitle("");
     setSongArtist("");
@@ -98,11 +105,26 @@ function App() {
     setShowModal(false);
   };
 
+  // Handle playing and pausing songs on card
+  const playPauseTrack = (index) => {
+    if (audioRef.current) {
+      if (playingIndex === index) {
+        audioRef.current.pause();
+        setPlayingIndex(null);
+      } else {
+        // Change audio source and play
+        audioRef.current.src = playlist[index].audio;
+        audioRef.current.play();
+        setPlayingIndex(index);
+      }
+    }
+  };
+
   return (
     <div className="app">
-      {/* Fixed Header */}
+      {/* Header */}
       <header className="header">
-        <h2>Mood Maestro</h2>
+        <h2>Mood Based Playlist</h2>
       </header>
 
       <main className="container">
@@ -112,7 +134,7 @@ function App() {
             type="text"
             value={mood}
             onChange={(e) => setMood(e.target.value)}
-            placeholder="Type your mood..."
+            placeholder="Enter your mood (happy, sad, chill)..."
           />
           <button type="submit">Generate</button>
         </form>
@@ -128,18 +150,15 @@ function App() {
                 <img src={song.cover} alt={song.title} />
                 <h3>{song.title}</h3>
                 <p>{song.artist}</p>
-                {song.audio && (
-                  <audio controls>
-                    <source src={song.audio} type="audio/mpeg" />
-                    Your browser does not support audio playback.
-                  </audio>
-                )}
+                <button onClick={() => playPauseTrack(index)}>
+                  {playingIndex === index ? "⏸️ Pause" : "▶️ Play"}
+                </button>
               </div>
             ))}
           </div>
         ) : (
           <p className="no-results">
-            No playlist found for this mood. Try another mood or create one!
+            No playlist found for this mood. Try a different mood or create one!
           </p>
         )}
       </main>
@@ -194,9 +213,12 @@ function App() {
         </div>
       )}
 
+      {/* Hidden audio element */}
+      <audio ref={audioRef} />
+
       {/* Footer */}
       <footer className="footer">
-        <p>© 2025 Mood Maestro. Built by Taronaldo.</p>
+        <p>© 2025 Mood Based Playlist. Built by Taronaldo.</p>
       </footer>
     </div>
   );
