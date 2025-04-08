@@ -65,10 +65,7 @@ function App() {
 
   return (
     <div className="app">
-      {/* Header */}
-      <header className="header">
-        <h2>Mood Playlist Generator</h2>
-      </header>
+      
 
       <main className="container">
         <h1>Mood Playlist Generator 🎶</h1>
