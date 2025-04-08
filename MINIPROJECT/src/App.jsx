@@ -1,75 +1,203 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 import "./App.css";
 
-function App() {
-  const [mood, setMood] = useState("");
-  const [tracks, setTracks] = useState([]);
-  const audioRef = useRef(null);
-  const [playingIndex, setPlayingIndex] = useState(null);
+const defaultPlaylists = {
+  happy: [
+    {
+      title: "Sunshine Vibes",
+      artist: "The Brights",
+      cover: "happy1.jpg",
+      audio: "song1.mp3"
+    },
+    {
+      title: "Feel Good Flow",
+      artist: "Joy Ride",
+      cover: "happy2.jpg",
+      audio: "song2.mp3"
+    },
+  ],
+  sad: [
+    {
+      title: "Blue Rain",
+      artist: "Mellow Tones",
+      cover: "sad1.jpg",
+      audio: "song3.mp3"
+    },
+    {
+      title: "Echoes of Silence",
+      artist: "Lonely Strings",
+      cover: "sad2.jpg",
+      audio: "song4.mp3"
+    },
+  ],
+  chill: [
+    {
+      title: "Night Drive",
+      artist: "LoFi Wave",
+      cover: "chill1.jpg",
+      audio: "song5.mp3"
+    },
+    {
+      title: "Cloud Surfing",
+      artist: "Dreamstate",
+      cover: "chill2.jpg",
+      audio: "song6.mp3"
+    },
+  ],
+};
 
-  const fetchSongs = async () => {
-    if (!mood) return;
-    const response = await fetch(`https://api.deezer.com/search?q=${mood}&output=jsonp`, {
-      method: "GET",
-      mode: "no-cors"
-    });
-    // JSONP doesn't work directly in fetch; we'll use a workaround in a moment
+function App() {
+  // State for mood and playlist display
+  const [mood, setMood] = useState("");
+  const [playlist, setPlaylist] = useState([]);
+  
+  // State for custom playlists (each mood can have custom songs)
+  const [customPlaylists, setCustomPlaylists] = useState({});
+  
+  // Modal state for custom playlist creation
+  const [showModal, setShowModal] = useState(false);
+  
+  // Custom playlist form states
+  const [customMood, setCustomMood] = useState("");
+  const [songTitle, setSongTitle] = useState("");
+  const [songArtist, setSongArtist] = useState("");
+  const [songCover, setSongCover] = useState("");
+  const [songAudio, setSongAudio] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const lowerMood = mood.toLowerCase();
+    // Check for custom songs first; if none, use default
+    const custom = customPlaylists[lowerMood] || [];
+    const def = defaultPlaylists[lowerMood] || [];
+    const combined = custom.length ? custom : def;
+    setPlaylist(combined);
   };
 
-  // Using JSONP because Deezer doesn't support CORS — workaround below
+  const handleCustomSubmit = (e) => {
+    e.preventDefault();
+    const lowerMood = customMood.toLowerCase();
+    const newSong = {
+      title: songTitle,
+      artist: songArtist,
+      cover: songCover,
+      audio: songAudio,
+    };
 
-  useEffect(() => {
-    if (mood) {
-      const script = document.createElement("script");
-      script.src = `https://api.deezer.com/search?q=${mood}&output=jsonp&callback=handleResult`;
-      document.body.appendChild(script);
-
-      window.handleResult = function (data) {
-        setTracks(data.data.slice(0, 6));
-      };
-    }
-  }, [mood]);
-
-  const playPauseTrack = (index) => {
-    if (audioRef.current) {
-      if (playingIndex === index) {
-        audioRef.current.pause();
-        setPlayingIndex(null);
-      } else {
-        audioRef.current.src = tracks[index].preview;
-        audioRef.current.play();
-        setPlayingIndex(index);
-      }
-    }
+    setCustomPlaylists((prev) => {
+      const prevSongs = prev[lowerMood] || [];
+      return { ...prev, [lowerMood]: [...prevSongs, newSong] };
+    });
+    
+    // Reset custom playlist form states
+    setCustomMood("");
+    setSongTitle("");
+    setSongArtist("");
+    setSongCover("");
+    setSongAudio("");
+    setShowModal(false);
   };
 
   return (
-    <div className="App">
-      <h1>Mood-Based Playlist 🎧</h1>
-      <input
-        type="text"
-        placeholder="Enter your mood (e.g. happy, sad, romantic)"
-        value={mood}
-        onChange={(e) => setMood(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") setMood(e.target.value);
-        }}
-      />
-      <div className="playlist">
-        {tracks.map((track, index) => (
-          <div className="track" key={track.id}>
-            <img src={track.album.cover_medium} alt="Album" />
-            <div className="info">
-              <h3>{track.title}</h3>
-              <p>{track.artist.name}</p>
-            </div>
-            <button onClick={() => playPauseTrack(index)}>
-              {playingIndex === index ? "⏸️" : "▶️"}
+    <div className="app">
+      {/* Fixed Header */}
+      <header className="header">
+        <h2>Mood Maestro</h2>
+      </header>
+
+      <main className="container">
+        <h1>Mood Playlist Generator 🎶</h1>
+        <form onSubmit={handleSubmit} className="mood-form">
+          <input
+            type="text"
+            value={mood}
+            onChange={(e) => setMood(e.target.value)}
+            placeholder="Type your mood..."
+          />
+          <button type="submit">Generate</button>
+        </form>
+
+        <button className="custom-btn" onClick={() => setShowModal(true)}>
+          Create Custom Playlist
+        </button>
+
+        {playlist.length > 0 ? (
+          <div className="playlist">
+            {playlist.map((song, index) => (
+              <div className="song-card" key={index}>
+                <img src={song.cover} alt={song.title} />
+                <h3>{song.title}</h3>
+                <p>{song.artist}</p>
+                {song.audio && (
+                  <audio controls>
+                    <source src={song.audio} type="audio/mpeg" />
+                    Your browser does not support audio playback.
+                  </audio>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="no-results">
+            No playlist found for this mood. Try another mood or create one!
+          </p>
+        )}
+      </main>
+
+      {/* Custom Playlist Modal */}
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h2>Create Custom Playlist</h2>
+            <form onSubmit={handleCustomSubmit} className="custom-form">
+              <input
+                type="text"
+                value={customMood}
+                onChange={(e) => setCustomMood(e.target.value)}
+                placeholder="Enter mood..."
+                required
+              />
+              <input
+                type="text"
+                value={songTitle}
+                onChange={(e) => setSongTitle(e.target.value)}
+                placeholder="Song Title"
+                required
+              />
+              <input
+                type="text"
+                value={songArtist}
+                onChange={(e) => setSongArtist(e.target.value)}
+                placeholder="Artist Name"
+                required
+              />
+              <input
+                type="text"
+                value={songCover}
+                onChange={(e) => setSongCover(e.target.value)}
+                placeholder="Cover Image Filename (e.g., sorrow.jpeg)"
+                required
+              />
+              <input
+                type="text"
+                value={songAudio}
+                onChange={(e) => setSongAudio(e.target.value)}
+                placeholder="Audio Filename (e.g., song7.mp3)"
+                required
+              />
+              <button type="submit">Add Song</button>
+            </form>
+            <button className="close-btn" onClick={() => setShowModal(false)}>
+              &times;
             </button>
           </div>
-        ))}
-      </div>
-      <audio ref={audioRef} />
+        </div>
+      )}
+
+      {/* Footer */}
+      <footer className="footer">
+        <p>© 2025 Mood Maestro. Built by Taronaldo.</p>
+      </footer>
     </div>
   );
 }
