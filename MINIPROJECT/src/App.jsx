@@ -17,46 +17,45 @@ const defaultPlaylists = {
 };
 
 function App() {
-  // State for mood input and playlist to display
+  // States for mood input and playlist display
   const [mood, setMood] = useState("");
   const [playlist, setPlaylist] = useState([]);
-  // State to hold custom playlists (each mood maps to an array of songs)
+  
+  // State to manage custom playlists (by mood)
   const [customPlaylists, setCustomPlaylists] = useState({});
-  // Toggle for the custom playlist modal
+  
+  // Modal for custom playlist creation
   const [showModal, setShowModal] = useState(false);
-  // State for custom playlist form inputs
   const [customMood, setCustomMood] = useState("");
   const [songTitle, setSongTitle] = useState("");
   const [songArtist, setSongArtist] = useState("");
   const [songCover, setSongCover] = useState("");
 
-  // Handle mood submission to generate playlist (custom takes precedence)
   const handleSubmit = (e) => {
     e.preventDefault();
     const lowerMood = mood.toLowerCase();
+    // Custom playlists take priority if they exist
     const custom = customPlaylists[lowerMood] || [];
     const def = defaultPlaylists[lowerMood] || [];
-    // Combine custom and default playlists (custom first if available)
     const combined = custom.length ? custom : def;
     setPlaylist(combined);
   };
 
-  // Handle custom playlist submission
   const handleCustomSubmit = (e) => {
     e.preventDefault();
     const lowerMood = customMood.toLowerCase();
-    // Create a new song object from the form values
     const newSong = {
       title: songTitle,
       artist: songArtist,
       cover: songCover,
     };
-    // Merge with any existing custom songs for that mood
+
     setCustomPlaylists((prev) => {
       const prevSongs = prev[lowerMood] || [];
       return { ...prev, [lowerMood]: [...prevSongs, newSong] };
     });
-    // Reset custom form state and close modal
+
+    // Clear the form and close modal
     setCustomMood("");
     setSongTitle("");
     setSongArtist("");
@@ -66,14 +65,19 @@ function App() {
 
   return (
     <div className="app">
-      <div className="container">
-        <h1>Mood Playlist Generator 🎵</h1>
+      {/* Header */}
+      <header className="header">
+        <h2>Mood Maestro</h2>
+      </header>
+
+      <main className="container">
+        <h1>Mood Playlist Generator 🎶</h1>
         <form onSubmit={handleSubmit} className="mood-form">
           <input
             type="text"
             value={mood}
             onChange={(e) => setMood(e.target.value)}
-            placeholder="Enter your mood..."
+            placeholder="Type your mood..."
           />
           <button type="submit">Generate</button>
         </form>
@@ -94,13 +98,12 @@ function App() {
           </div>
         ) : (
           <p className="no-results">
-            No playlist found for this mood. Try another mood or create a custom
-            one.
+            No playlist found for this mood. Try another mood or create one!
           </p>
         )}
-      </div>
+      </main>
 
-      {/* Modal for Custom Playlist */}
+      {/* Custom Playlist Modal */}
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -131,7 +134,7 @@ function App() {
                 type="text"
                 value={songCover}
                 onChange={(e) => setSongCover(e.target.value)}
-                placeholder="Cover Image URL (in public folder)"
+                placeholder="Cover Image Filename (e.g., sorrow.jpeg)"
                 required
               />
               <button type="submit">Add Song</button>
@@ -142,6 +145,11 @@ function App() {
           </div>
         </div>
       )}
+
+      {/* Footer */}
+      <footer className="footer">
+        <p>© 2025 Mood Maestro. Built by Taronaldo.</p>
+      </footer>
     </div>
   );
 }
