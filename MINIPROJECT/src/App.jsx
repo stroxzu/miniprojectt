@@ -67,7 +67,7 @@ function App() {
     <div className="app">
       {/* Header */}
       <header className="header">
-        <h2>Mood Maestro</h2>
+        <h2>Mood Playlist Generator</h2>
       </header>
 
       <main className="container">
@@ -146,10 +146,7 @@ function App() {
         </div>
       )}
 
-      {/* Footer */}
-      <footer className="footer">
-        <p>© 2025 Mood Maestro. Built by Taronaldo.</p>
-      </footer>
+      
     </div>
   );
 }
