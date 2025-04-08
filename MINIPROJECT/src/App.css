@@ -51,7 +51,6 @@ h1 {
   font-size: 3rem;
   margin-bottom: 20px;
   background: linear-gradient(90deg, #ff4f81, #ffa54f);
-  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: fadeIn 1s ease;
 }
