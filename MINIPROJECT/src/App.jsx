@@ -34,13 +34,13 @@ const defaultPlaylists = {
     {
       title: "Night Drive",
       artist: "LoFi Wave",
-      cover: "chill1.jpg",
+      cover: "chill1.jpeg",
       audio: "song5.mp3",
     },
     {
       title: "Cloud Surfing",
       artist: "Dreamstate",
-      cover: "chill2.jpg",
+      cover: "chill2.jpeg",
       audio: "song6.mp3",
     },
   ],
