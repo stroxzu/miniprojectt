@@ -216,10 +216,7 @@ function App() {
       {/* Hidden audio element */}
       <audio ref={audioRef} />
 
-      {/* Footer */}
-      <footer className="footer">
-        <p>© 2025 Mood Based Playlist. Built by Taronaldo.</p>
-      </footer>
+      
     </div>
   );
 }
