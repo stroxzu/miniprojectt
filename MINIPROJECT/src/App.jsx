@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import "./App.css";
 
 const defaultPlaylists = {
-  happy: [
+  😂: [
     {
       title: "Sunshine Vibes",
       artist: "The Brights",
