@@ -47,7 +47,7 @@ const defaultPlaylists = {
   calm:[
     {
       title:"lofi beat",
-      artist:"Ronaldo",
+      artist:"jason",
       cover:"calm1.jpg",
       audio:"testingsong.mp3",
     }
