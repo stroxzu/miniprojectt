@@ -44,6 +44,14 @@ const defaultPlaylists = {
       audio: "song6.mp3",
     },
   ],
+  calm:[
+    {
+      title:"lofi beat",
+      artist:"Ronaldo",
+      cover:"calm1.jpg",
+      audio:"testingsong.mp3",
+    }
+  ]
 };
 
 function App() {
