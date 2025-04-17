@@ -1,278 +1,70 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap');
-
-* {
-  box-sizing: border-box;
-}
-
+/* src/App.css */
 body {
   margin: 0;
-  font-family: 'Outfit', sans-serif;
-  background: linear-gradient(135deg, #141e30, #243b55);
-  color: white;
-  overflow-x: hidden;
+  font-family: "Segoe UI", sans-serif;
 }
 
-/* Header */
-.header {
-  width: 100%;
-  padding: 20px 0;
-  background: rgba(0, 0, 0, 0.3);
-  text-align: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 100;
-}
-
-.header h2 {
-  margin: 0;
-  font-size: 1.8rem;
-  letter-spacing: 1px;
-  color: #ff4f81;
-}
-
-/* Main Container */
-.app {
+.app-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  padding-top: 80px; /* so content doesn't hide behind header */
-}
-
-.container {
-  max-width: 900px;
-  width: 90%;
-  margin: 0 auto;
-  text-align: center;
-  padding-bottom: 40px;
-}
-
-h1 {
-  font-size: 3rem;
-  margin-bottom: 20px;
-  background: linear-gradient(90deg, #8c0fde, #d92222);
-  
-  animation: fadeIn 1s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Mood Form */
-.mood-form {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.mood-form input {
-  padding: 14px 20px;
-  border-radius: 10px;
-  border: none;
-  width: 60%;
-  max-width: 300px;
-  font-size: 1rem;
-  background-color: #1a2733;
-  color: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s ease;
-}
-
-.mood-form input:focus {
-  transform: scale(1.02);
-  outline: none;
-}
-
-.mood-form button {
-  padding: 14px 28px;
-  border-radius: 10px;
-  border: none;
-  background-color: #ff4f81;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-}
-
-.mood-form button:hover {
-  background-color: #ff3366;
-  transform: translateY(-3px);
-}
-
-/* Custom Button */
-.custom-btn {
-  margin-bottom: 30px;
-  padding: 12px 22px;
-  border: 2px solid #ff4f81;
-  border-radius: 10px;
-  background: transparent;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
-}
-
-.custom-btn:hover {
-  background: rgba(255, 79, 129, 0.2);
-  transform: translateY(-3px);
-}
-
-/* Playlist Cards */
-.playlist {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 25px;
-  margin-top: 20px;
-}
-
-.song-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 20px;
-  border-radius: 15px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
-}
-
-.song-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 35px rgba(0, 0, 0, 0.4);
-}
-
-.song-card img {
-  width: 100%;
-  height: 170px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-bottom: 12px;
-}
-
-.song-card h3 {
-  font-size: 1.2rem;
-  margin-bottom: 6px;
-}
-
-.song-card p {
-  font-size: 0.95rem;
-  color: #d3d3d3;
-}
-
-.song-card button {
-  margin-top: 10px;
-  padding: 8px 16px;
-  background-color: white;
-  color: #333;
-  border: none;
-  border-radius: 25px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.song-card button:hover {
-  background-color: #ddd;
-}
-
-/* No Results Text */
-.no-results {
-  color: #bbb;
-  margin-top: 20px;
-  font-style: italic;
-}
-
-/* Modal Styles */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.65);
-  display: flex;
   align-items: center;
-  justify-content: center;
-  z-index: 1000;
+  text-align: center;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  padding: 2rem;
+  transition: all 0.6s ease-in-out;
 }
 
-.modal {
-  background: #121212;
-  padding: 30px;
-  border-radius: 15px;
-  position: relative;
-  width: 90%;
-  max-width: 420px;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
-  animation: modalFadeIn 0.3s ease;
-}
-
-@keyframes modalFadeIn {
-  from { opacity: 0; transform: translateY(-15px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.modal h2 {
-  margin: 0 0 20px;
-  font-size: 1.9rem;
-  color: #ff4f81;
-}
-
-.custom-form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.custom-form input {
-  padding: 12px 16px;
-  border-radius: 8px;
-  border: none;
-  font-size: 1rem;
-  background-color: #1a2733;
-  color: white;
-}
-
-.custom-form button {
-  padding: 12px;
+input {
+  padding: 1rem;
+  font-size: 1.2rem;
+  width: 60%;
+  max-width: 400px;
   border-radius: 10px;
   border: none;
-  background-color: #ff4f81;
+  margin-bottom: 1.5rem;
+}
+
+button {
+  background-color: #222;
   color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.custom-form button:hover {
-  background-color: #ff3366;
-}
-
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 14px;
-  background: transparent;
+  padding: 0.7rem 1.4rem;
   border: none;
-  font-size: 2rem;
-  color: #ff4f81;
+  border-radius: 8px;
   cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
 }
 
-/* Footer */
-.footer {
-  text-align: center;
-  padding: 20px 0;
-  background: rgba(0, 0, 0, 0.25);
+button:hover {
+  background-color: #555;
+}
+
+.playlist {
+  margin-top: 2rem;
   width: 100%;
-  margin-top: auto;
+  max-width: 600px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
 
-.footer p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: #ccc;
+.playlist a {
+  display: block;
+  margin: 0.5rem 0;
+  color: inherit;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+@media (max-width: 600px) {
+  input {
+    width: 80%;
+  }
+
+  .playlist {
+    padding: 1rem;
+  }
 }

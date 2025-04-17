@@ -11,7 +11,7 @@ const defaultPlaylists = {
     },
     {
       title: "Feel Good Flow",
-      artist: "Joy ",
+      artist: "Joy Ride",
       cover: "happy2.jpg",
       audio: "song2.mp3",
     },
