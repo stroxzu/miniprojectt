@@ -1,138 +1,94 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 
-const moodThemes = {
-  happy:     { gradient: ['#FFDEE9','#B5FFFC'], text: '#333' },
-  sad:       { gradient: ['#cfd9df','#e2ebf0'], text: '#333' },
-  chill:     { gradient: ['#d4fc79','#96e6a1'], text: '#333' },
-  angry:     { gradient: ['#f093fb','#f5576c'], text: '#fff' },
-  love:      { gradient: ['#ffa1c9','#ff758c'], text: '#fff' },
-  energetic: { gradient: ['#fddb92','#d1fdff'], text: '#333' },
+const themes = {
+  happy: ['#FFDEE9', '#B5FFFC'],
+  sad: ['#cfd9df', '#e2ebf0'],
+  chill: ['#d4fc79', '#96e6a1'],
+  angry: ['#f093fb', '#f5576c'],
+  love: ['#ffa1c9', '#ff758c'],
+  energetic: ['#fddb92', '#d1fdff'],
+  default: ['#ffffff', '#e0e0e0'],
 };
-
-const vibeGradients = [
-  'linear-gradient(135deg, #f6d365, #fda085)',
-  'linear-gradient(135deg, #ff9a9e, #fad0c4)',
-  'linear-gradient(135deg, #a1c4fd, #c2e9fb)',
-  'linear-gradient(135deg, #84fab0, #8fd3f4)',
-  'linear-gradient(135deg, #fccb90, #d57eeb)',
-  'linear-gradient(135deg, #cfd9df, #e2ebf0)',
-];
 
 export default function App() {
   const [mood, setMood] = useState('');
-  const [theme, setTheme] = useState({ gradient: ['#fff','#eee'], text: '#333' });
+  const [theme, setTheme] = useState(themes.default);
   const [tracks, setTracks] = useState([]);
   const [playing, setPlaying] = useState(null);
   const audioRef = useRef();
 
-  // Update theme on mood change
   useEffect(() => {
-    const key = mood.toLowerCase().trim();
-    setTheme(moodThemes[key] || { gradient: ['#fff','#eee'], text: '#333' });
+    const lowerMood = mood.toLowerCase();
+    setTheme(themes[lowerMood] || themes.default);
   }, [mood]);
 
-  // Fetch & shuffle from iTunes
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!mood) return;
     const res = await fetch(
-      `https://itunes.apple.com/search?term=${encodeURIComponent(mood)}&media=music&limit=20`
+      `https://itunes.apple.com/search?term=${encodeURIComponent(mood)}&media=music&limit=10`
     );
     const data = await res.json();
-    const shuffled = data.results.sort(() => 0.5 - Math.random()).slice(0, 6);
-    setTracks(shuffled);
+    setTracks(data.results);
     setPlaying(null);
     audioRef.current?.pause();
   };
 
-  // Play/pause
-  const togglePlay = idx => {
-    if (!audioRef.current) return;
-    if (playing === idx) {
+  const playPreview = (track, index) => {
+    if (playing === index) {
       audioRef.current.pause();
       setPlaying(null);
     } else {
-      audioRef.current.src = tracks[idx].previewUrl;
+      audioRef.current.src = track.previewUrl;
       audioRef.current.play();
-      setPlaying(idx);
+      setPlaying(index);
     }
   };
 
-  const isHome = tracks.length === 0 && !mood;
-
   return (
     <div
-      className={`app-container ${isHome ? 'hero' : ''}`}
+      className="app"
       style={{
-        background: `linear-gradient(135deg, ${theme.gradient[0]}, ${theme.gradient[1]})`,
-        color: theme.text,
+        background: `linear-gradient(135deg, ${theme[0]}, ${theme[1]})`,
+        minHeight: '100vh',
       }}
     >
-      {/* Navbar */}
-      <nav className="navbar">
-        <div className="navbar-inner">
-          <div className="logo">MoodGenius</div>
-          {/* Dark mode, if you want */}
-        </div>
-      </nav>
+      <header className="header">
+        <h1>Adaptive Mood Playlist Generator</h1>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Enter your mood (e.g. happy, chill)"
+            value={mood}
+            onChange={(e) => setMood(e.target.value)}
+            required
+          />
+          <button type="submit">Generate</button>
+        </form>
+      </header>
 
-      {/* Main Content */}
-      <main className={`main-content ${isHome ? 'home-content' : ''}`}>
-        <div className={`card ${isHome ? 'card-hero' : ''}`}>
-          <h1 className="title">Mood Playlist Generator</h1>
-
-          <form onSubmit={handleSubmit} className="mood-form">
-            <input
-              type="text"
-              placeholder="Type a mood (happy, sad, chill...)"
-              value={mood}
-              onChange={e => setMood(e.target.value)}
-            />
-            <button type="submit">Generate</button>
-          </form>
-
-          {!isHome && (
-            <div className="playlist">
-              {tracks.map((t, i) => (
-                <div
-                  className="track-card"
-                  key={t.trackId}
-                  style={{ background: vibeGradients[i % vibeGradients.length] }}
-                >
-                  <img
-                    src={t.artworkUrl100.replace('100x100','300x300')}
-                    alt={t.trackName}
-                    className="track-img"
-                  />
-                  <div className="track-info">
-                    <h3>{t.trackName}</h3>
-                    <p>{t.artistName}</p>
-                  </div>
-                  <div className="track-actions">
-                    <button onClick={() => togglePlay(i)}>
-                      {playing === i ? '⏸️' : '▶️'}
-                    </button>
-                    <a href={t.trackViewUrl} target="_blank" rel="noreferrer">
-                      Listen
-                    </a>
-                  </div>
-                </div>
-              ))}
+      <main className="playlist">
+        {tracks.map((track, i) => (
+          <div className="card" key={track.trackId}>
+            <img src={track.artworkUrl100} alt={track.trackName} />
+            <h3>{track.trackName}</h3>
+            <p>{track.artistName}</p>
+            <div className="actions">
+              <button onClick={() => playPreview(track, i)}>
+                {playing === i ? '⏸ Pause' : '▶ Play'}
+              </button>
+              <a href={track.trackViewUrl} target="_blank" rel="noopener noreferrer">
+                Listen on Apple Music
+              </a>
             </div>
-          )}
-        </div>
+          </div>
+        ))}
+        <audio ref={audioRef} />
       </main>
 
-      {/* Audio Player */}
-      <audio ref={audioRef} />
-
-      {/* Footer */}
-      {!isHome && (
-        <footer className="footer">
-          <p>© 2025 MoodGenius. All rights reserved.</p>
-        </footer>
-      )}
+      <footer className="footer">
+        <p>🎧 Made with ❤️ - Adaptive Mood Playlist Generator © 2025</p>
+      </footer>
     </div>
   );
 }
