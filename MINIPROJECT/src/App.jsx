@@ -18,12 +18,12 @@ export default function App() {
   const [playing, setPlaying] = useState(null);
   const audioRef = useRef();
 
-  // Update gradient theme on mood
+  // Update gradient theme on mood change
   useEffect(() => {
     setTheme(themes[mood.toLowerCase()] || themes.default);
   }, [mood]);
 
-  // Fetch tracks
+  // Fetch & display 6 songs
   const handleSubmit = async e => {
     e.preventDefault();
     if (!mood) return;
@@ -31,7 +31,7 @@ export default function App() {
       `https://itunes.apple.com/search?term=${encodeURIComponent(mood)}&media=music&limit=20`
     );
     const data = await res.json();
-    setTracks(data.results.slice(0,6));
+    setTracks(data.results.slice(0, 6));
     setPlaying(null);
     audioRef.current?.pause();
   };
@@ -48,8 +48,6 @@ export default function App() {
     }
   };
 
-  const isHome = tracks.length === 0;
-
   return (
     <div
       className="app"
@@ -57,73 +55,61 @@ export default function App() {
         background: `linear-gradient(135deg, ${theme[0]}, ${theme[1]})`,
       }}
     >
-      {/* Navbar */}
-      <nav className="navbar">
-        <div className="navbar-content">
+      {/* Navbar with persistent search */}
+      <header className="navbar">
+        <div className="navbar-inner">
           <div className="logo">Adaptive Mood Playlist Generator</div>
+          <form onSubmit={handleSubmit} className="navbar-form">
+            <input
+              type="text"
+              placeholder="Enter mood…"
+              value={mood}
+              onChange={e => setMood(e.target.value)}
+              required
+            />
+            <button type="submit">Generate</button>
+          </form>
         </div>
-      </nav>
+      </header>
 
-      {/* Main Area */}
-      <main className={isHome ? 'hero-area' : 'content-area'}>
-        {isHome ? (
-          <div className="hero-card">
-            <h1>Find Your Mood → Hear The Music</h1>
-            <form onSubmit={handleSubmit} className="search-form">
-              <input
-                type="text"
-                placeholder="Type a mood (happy, sad, chill...)"
-                value={mood}
-                onChange={e => setMood(e.target.value)}
-                required
-              />
-              <button type="submit">Generate</button>
-            </form>
+      {/* Main content area */}
+      <main className="main">
+        {tracks.length === 0 ? (
+          <div className="hero">
+            <h1>Discover Music by Mood</h1>
+            <p>Type a mood above & hit “Generate”</p>
           </div>
         ) : (
-          <>
-            <div className="search-bar-wrapper">
-              <form onSubmit={handleSubmit} className="search-form">
-                <input
-                  type="text"
-                  placeholder="Search another mood..."
-                  value={mood}
-                  onChange={e => setMood(e.target.value)}
-                  required
+          <div className="playlist-grid">
+            {tracks.map((track, i) => (
+              <div className="track-card" key={track.trackId}>
+                <img
+                  src={track.artworkUrl100.replace('100x100','300x300')}
+                  alt={track.trackName}
+                  className="track-img"
                 />
-                <button type="submit">Go</button>
-              </form>
-            </div>
-            <div className="playlist-grid">
-              {tracks.map((t, i) => (
-                <div className="track-card" key={t.trackId}>
-                  <img
-                    src={t.artworkUrl100.replace('100x100','300x300')}
-                    alt={t.trackName}
-                    className="track-img"
-                  />
-                  <div className="track-info">
-                    <h3>{t.trackName}</h3>
-                    <p>{t.artistName}</p>
-                  </div>
-                  <div className="track-actions">
-                    <button onClick={() => togglePlay(i)}>
-                      {playing === i ? '⏸ Pause' : '▶ Play'}
-                    </button>
-                    <a href={t.trackViewUrl} target="_blank" rel="noreferrer">
-                      Listen
-                    </a>
-                  </div>
+                <div className="track-info">
+                  <h3>{track.trackName}</h3>
+                  <p>{track.artistName}</p>
                 </div>
-              ))}
-            </div>
-          </>
+                <div className="track-actions">
+                  <button onClick={() => togglePlay(i)}>
+                    {playing === i ? '⏸ Pause' : '▶ Play'}
+                  </button>
+                  <a href={track.trackViewUrl} target="_blank" rel="noreferrer">
+                    Listen
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </main>
 
       <audio ref={audioRef} />
 
-      {!isHome && (
+      {/* Footer */}
+      {tracks.length > 0 && (
         <footer className="footer">
           <p>© 2025 Adaptive Mood Playlist Generator</p>
         </footer>
