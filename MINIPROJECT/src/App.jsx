@@ -1,4 +1,4 @@
-// src/App.jsx
+// App.jsx
 import React, { useState } from "react";
 import { moodData } from "./moods";
 import "./App.css";
@@ -10,50 +10,49 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const key = mood.toLowerCase().trim();
-    if (moodData[key]) {
-      setActiveMood(moodData[key]);
-    } else {
-      setActiveMood(null);
-    }
+    setActiveMood(moodData[key] || null);
   };
 
-  return (
-    <div
-      className="app-container"
-      style={{
-        backgroundImage: activeMood
-          ? `url(${activeMood.backgroundImage})`
-          : "linear-gradient(to right, #fff, #eee)",
-        backgroundColor: activeMood?.theme || "#fff",
-        color: activeMood?.text || "#333",
-      }}
-    >
-      <h1>Mood-Based Playlist 🎧</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Enter your mood (happy, sad, chill, angry)..."
-          value={mood}
-          onChange={(e) => setMood(e.target.value)}
-        />
-        <br />
-        <button type="submit">Generate Playlist</button>
-      </form>
+  const backgroundStyle = activeMood
+    ? {
+        backgroundImage: `url(${activeMood.backgroundImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }
+    : {};
 
-      {activeMood ? (
-        <div className="playlist">
-          <h2>Playlist for "{mood}" mood</h2>
-          {activeMood.playlist.map((song, index) => (
-            <a key={index} href={song.link} target="_blank" rel="noreferrer">
-              🎵 {song.title}
-            </a>
-          ))}
-        </div>
-      ) : (
-        <p style={{ marginTop: "2rem" }}>
-          Enter a mood like <strong>happy</strong>, <strong>sad</strong>, <strong>chill</strong>, or <strong>angry</strong>.
-        </p>
-      )}
+  return (
+    <div className="app-container" style={backgroundStyle}>
+      <div className="card">
+        <h1>Mood Playlist Generator 🎶</h1>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Type your mood (happy, sad, chill...)"
+            value={mood}
+            onChange={(e) => setMood(e.target.value)}
+          />
+          <button type="submit">Generate</button>
+        </form>
+
+        {activeMood && (
+          <div className="playlist">
+            <h2>🎧 Playlist for "{mood}"</h2>
+            {activeMood.playlist.map((song, index) => (
+              <a
+                key={index}
+                href={song.link}
+                className="song-link"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {song.title}
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
