@@ -26,11 +26,13 @@ export default function App() {
   const [playing, setPlaying] = useState(null);
   const audioRef = useRef();
 
+  // Update theme on mood change
   useEffect(() => {
     const key = mood.toLowerCase().trim();
     setTheme(moodThemes[key] || { gradient: ['#fff','#eee'], text: '#333' });
   }, [mood]);
 
+  // Fetch & shuffle from iTunes
   const handleSubmit = async e => {
     e.preventDefault();
     if (!mood) return;
@@ -44,6 +46,7 @@ export default function App() {
     audioRef.current?.pause();
   };
 
+  // Play/pause
   const togglePlay = idx => {
     if (!audioRef.current) return;
     if (playing === idx) {
@@ -66,55 +69,68 @@ export default function App() {
         color: theme.text,
       }}
     >
-      <div className={`card ${isHome ? 'card-hero' : ''}`}>
-        <h1 className="title">Mood Playlist Generator</h1>
+      {/* Navbar */}
+      <nav className="navbar">
+        <div className="navbar-inner">
+          <div className="logo">MoodGenius</div>
+          {/* Dark mode, if you want */}
+        </div>
+      </nav>
 
-        <form onSubmit={handleSubmit} className="mood-form">
-          <input
-            type="text"
-            placeholder="Type a mood (happy, sad, chill...)"
-            value={mood}
-            onChange={e => setMood(e.target.value)}
-          />
-          <button type="submit">Generate</button>
-        </form>
+      {/* Main Content */}
+      <main className={`main-content ${isHome ? 'home-content' : ''}`}>
+        <div className={`card ${isHome ? 'card-hero' : ''}`}>
+          <h1 className="title">Mood Playlist Generator</h1>
 
-        {!isHome && (
-          <div className="playlist">
-            {tracks.map((t, i) => (
-              <div
-                className="track-card"
-                key={t.trackId}
-                style={{ background: vibeGradients[i % vibeGradients.length] }}
-              >
-                <img
-                  src={t.artworkUrl100.replace('100x100','300x300')}
-                  alt={t.trackName}
-                  className="track-img"
-                />
-                <div className="track-info">
-                  <h3>{t.trackName}</h3>
-                  <p>{t.artistName}</p>
+          <form onSubmit={handleSubmit} className="mood-form">
+            <input
+              type="text"
+              placeholder="Type a mood (happy, sad, chill...)"
+              value={mood}
+              onChange={e => setMood(e.target.value)}
+            />
+            <button type="submit">Generate</button>
+          </form>
+
+          {!isHome && (
+            <div className="playlist">
+              {tracks.map((t, i) => (
+                <div
+                  className="track-card"
+                  key={t.trackId}
+                  style={{ background: vibeGradients[i % vibeGradients.length] }}
+                >
+                  <img
+                    src={t.artworkUrl100.replace('100x100','300x300')}
+                    alt={t.trackName}
+                    className="track-img"
+                  />
+                  <div className="track-info">
+                    <h3>{t.trackName}</h3>
+                    <p>{t.artistName}</p>
+                  </div>
+                  <div className="track-actions">
+                    <button onClick={() => togglePlay(i)}>
+                      {playing === i ? '⏸️' : '▶️'}
+                    </button>
+                    <a href={t.trackViewUrl} target="_blank" rel="noreferrer">
+                      Listen
+                    </a>
+                  </div>
                 </div>
-                <div className="track-actions">
-                  <button onClick={() => togglePlay(i)}>
-                    {playing === i ? '⏸️' : '▶️'}
-                  </button>
-                  <a href={t.trackViewUrl} target="_blank" rel="noreferrer">
-                    Listen
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </main>
 
+      {/* Audio Player */}
       <audio ref={audioRef} />
 
+      {/* Footer */}
       {!isHome && (
-        <footer>
-          <p>© 2025 Mood Playlist Generator</p>
+        <footer className="footer">
+          <p>© 2025 MoodGenius. All rights reserved.</p>
         </footer>
       )}
     </div>

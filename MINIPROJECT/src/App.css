@@ -1,78 +1,129 @@
 /* App.css */
-body {
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+* {
+  box-sizing: border-box;
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
+  padding: 0;
 }
+body, html {
+  height: 100%;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Container & Hero Animation */
 .app-container {
-  min-height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
+  flex-direction: column;
+  min-height: 100vh;
   transition: background 0.6s ease, color 0.6s ease;
 }
 .app-container.hero {
-  /* animated subtle gradient for hero */
-  animation: heroGradient 10s ease infinite;
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
 }
-@keyframes heroGradient {
+@keyframes gradientShift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
-.card {
+
+/* Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
   width: 100%;
-  max-width: 800px;
+  height: 60px;
+  backdrop-filter: blur(12px);
   background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(16px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 100;
+}
+.navbar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+}
+.logo {
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 80px;
+}
+.main-content.home-content {
+  align-items: center;
+}
+.card {
+  width: 90%;
+  max-width: 900px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(20px);
   border-radius: 24px;
   padding: 2rem;
   box-shadow: 0 8px 32px rgba(0,0,0,0.2);
   transition: transform 0.4s ease;
 }
 .card-hero {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  padding: 4rem 2rem;
 }
 .title {
-  margin: 0 0 1.5rem;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
   text-align: center;
-  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  font-weight: 600;
+  line-height: 1.2;
 }
+
+/* Form */
 .mood-form {
   display: flex;
-  gap: 0.75rem;
-  margin-bottom: 2rem;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 .mood-form input {
   flex: 1;
-  padding: 1rem;
+  min-width: 220px;
+  max-width: 400px;
+  padding: 1rem 1.2rem;
   border: none;
-  border-radius: 16px;
+  border-radius: 12px;
   font-size: 1rem;
-  outline: none;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 .mood-form button {
   padding: 1rem 2rem;
   border: none;
-  border-radius: 16px;
+  border-radius: 12px;
   background: rgba(0,0,0,0.3);
   color: inherit;
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
   transition: background 0.3s;
 }
 .mood-form button:hover {
   background: rgba(0,0,0,0.5);
 }
+
+/* Playlist Grid */
 .playlist {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+  gap: 1.5rem;
 }
+
+/* Track Card */
 .track-card {
   display: flex;
   flex-direction: column;
@@ -82,7 +133,7 @@ body {
   transition: transform 0.3s, box-shadow 0.3s;
 }
 .track-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-6px);
   box-shadow: 0 12px 28px rgba(0,0,0,0.3);
 }
 .track-img {
@@ -96,14 +147,16 @@ body {
   flex: 1;
 }
 .track-info h3 {
-  margin: 0 0 0.5rem;
-  font-size: 1.1rem;
+  font-size: 1rem;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
 }
 .track-info p {
-  margin: 0;
-  font-size: 0.9rem;
-  opacity: 0.85;
+  font-size: 0.85rem;
+  opacity: 0.8;
 }
+
+/* Actions */
 .track-actions {
   display: flex;
   justify-content: space-between;
@@ -118,40 +171,46 @@ body {
   padding: 0.5rem 0.8rem;
   border-radius: 12px;
   cursor: pointer;
+  font-size: 0.85rem;
   text-decoration: none;
   color: inherit;
-  font-size: 0.85rem;
   transition: background 0.3s;
 }
 .track-actions button:hover,
 .track-actions a:hover {
   background: rgba(255,255,255,0.5);
 }
+
+/* No Tracks */
 .no-track {
   grid-column: 1/-1;
   text-align: center;
   opacity: 0.7;
   font-style: italic;
 }
-footer {
-  margin-top: 2rem;
+
+/* Footer */
+.footer {
   text-align: center;
-  font-size: 0.8rem;
+  padding: 1.5rem 0;
+  font-size: 0.85rem;
   opacity: 0.6;
 }
 
+/* Responsive Breakpoints */
+@media (min-width: 1024px) {
+  .card {
+    width: 70%;
+  }
+}
 @media (max-width: 600px) {
   .card {
     padding: 1.5rem;
   }
   .title {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
   .mood-form {
-    flex-direction: column;
-  }
-  .mood-form input,
-  .mood-form button {
-    width: 100%;
+    gap: 0.5rem;
   }
 }
