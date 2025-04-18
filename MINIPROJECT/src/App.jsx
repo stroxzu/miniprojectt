@@ -2,13 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 
 const themes = {
-  happy:     ['#FFDEE9', '#B5FFFC'],
-  sad:       ['#cfd9df', '#e2ebf0'],
-  chill:     ['#d4fc79', '#96e6a1'],
-  angry:     ['#f093fb', '#f5576c'],
-  love:      ['#ffa1c9', '#ff758c'],
-  energetic: ['#fddb92', '#d1fdff'],
-  default:   ['#ffffff', '#e0e0e0'],
+  happy: ['#FFD700', '#FFA500'],     // Bright yellow and orange
+  sad: ['#87CEEB', '#4682B4'],       // Soft blue and steel blue
+  chill: ['#32CD32', '#00FA9A'],     // Lime green and medium spring green
+  angry: ['#FF4500', '#8B0000'],     // Orange red and dark red
+  love: ['#FF69B4', '#FF1493'],      // Hot pink and deep pink
+  energetic: ['#9400D3', '#4B0082'], // Dark violet and indigo
+  default: ['#F0F0F0', '#D3D3D3'],   // Light gray gradients
 };
 
 export default function App() {
@@ -16,29 +16,37 @@ export default function App() {
   const [theme, setTheme] = useState(themes.default);
   const [tracks, setTracks] = useState([]);
   const [playing, setPlaying] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const audioRef = useRef();
 
-  // Update CSS variables for gradient on mood change
   useEffect(() => {
-    const [start, end] = themes[mood.toLowerCase()] || themes.default;
-    document.documentElement.style.setProperty('--start-color', start);
-    document.documentElement.style.setProperty('--end-color', end);
+    setTheme(themes[mood.toLowerCase()] || themes.default);
   }, [mood]);
 
-  // Fetch & display 6 songs
-  const handleSubmit = async e => {
-    e.preventDefault();
+  const handleGenerate = async () => {
     if (!mood) return;
-    const res = await fetch(
-      `https://itunes.apple.com/search?term=${encodeURIComponent(mood)}&media=music&limit=20`
-    );
-    const data = await res.json();
-    setTracks(data.results.slice(0, 6));
-    setPlaying(null);
-    audioRef.current?.pause();
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(
+        `https://itunes.apple.com/search?term=${encodeURIComponent(mood)}&media=music&limit=20`
+      );
+      const data = await res.json();
+      if (data.results.length === 0) {
+        setError('No tracks found for this mood.');
+      } else {
+        setTracks(data.results.slice(0, 6));
+      }
+    } catch (err) {
+      setError('Failed to fetch tracks. Please try again.');
+    } finally {
+      setLoading(false);
+      setPlaying(null);
+      audioRef.current?.pause();
+    }
   };
 
-  // Play/pause preview
   const togglePlay = idx => {
     if (playing === idx) {
       audioRef.current.pause();
@@ -50,15 +58,17 @@ export default function App() {
     }
   };
 
-  const isHome = tracks.length === 0;
-
   return (
-    <div className="app">
-      {/* Navbar */}
+    <div
+      className="app"
+      style={{
+        background: `linear-gradient(135deg, ${theme[0]}, ${theme[1]})`,
+      }}
+    >
       <header className="navbar">
-        <div className="container navbar-inner">
-          <div className="logo">Adaptive Mood Playlist Generator</div>
-          <form onSubmit={handleSubmit} className="navbar-form">
+        <div className="navbar-inner">
+          <div className="logo">MoodMix</div>
+          <div className="navbar-form">
             <input
               type="text"
               placeholder="Enter mood…"
@@ -66,55 +76,53 @@ export default function App() {
               onChange={e => setMood(e.target.value)}
               required
             />
-            <button type="submit">Generate</button>
-          </form>
+            <button onClick={handleGenerate}>Generate</button>
+          </div>
         </div>
       </header>
 
-      {/* Main */}
-      <main className={`main ${isHome ? 'hero' : 'results'}`}>
-        <div className="container">
-          {isHome ? (
-            <div className="hero-content">
-              <h1>Discover Music by Mood</h1>
-              <p>Type your mood in the search bar above and hit “Generate”</p>
-            </div>
-          ) : (
-            <div className="playlist-grid">
-              {tracks.map((track, i) => (
-                <div className="track-card" key={track.trackId}>
-                  <img
-                    src={track.artworkUrl100.replace('100x100','300x300')}
-                    alt={track.trackName}
-                    className="track-img"
-                  />
-                  <div className="track-info">
-                    <h3>{track.trackName}</h3>
-                    <p>{track.artistName}</p>
-                  </div>
-                  <div className="track-actions">
-                    <button onClick={() => togglePlay(i)}>
-                      {playing === i ? '⏸ Pause' : '▶ Play'}
-                    </button>
-                    <a href={track.trackViewUrl} target="_blank" rel="noreferrer">
-                      Listen
-                    </a>
-                  </div>
+      <main className="main">
+        {loading ? (
+          <div className="loader">Loading...</div>
+        ) : error ? (
+          <div className="error">{error}</div>
+        ) : tracks.length === 0 ? (
+          <div className="hero">
+            <h1>Discover Music by Mood</h1>
+            <p>Type a mood above & hit “Generate”</p>
+          </div>
+        ) : (
+          <div className="playlist-grid">
+            {tracks.map((track, i) => (
+              <div className="track-card" key={track.trackId}>
+                <img
+                  src={track.artworkUrl100.replace('100x100', '300x300')}
+                  alt={track.trackName}
+                  className="track-img"
+                />
+                <div className="track-info">
+                  <h3>{track.trackName}</h3>
+                  <p>{track.artistName}</p>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+                <div className="track-actions">
+                  <button onClick={() => togglePlay(i)}>
+                    {playing === i ? '⏸ Pause' : '▶ Play'}
+                  </button>
+                  <a href={track.trackViewUrl} target="_blank" rel="noreferrer">
+                    Listen
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </main>
 
       <audio ref={audioRef} />
 
-      {/* Footer */}
-      {!isHome && (
+      {tracks.length > 0 && (
         <footer className="footer">
-          <div className="container">
-            <p>© 2025 Adaptive Mood Playlist Generator</p>
-          </div>
+          <p>© 2025 MoodMix - Adaptive Mood Playlist Generator</p>
         </footer>
       )}
     </div>

@@ -1,18 +1,11 @@
-/* App.css */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-
-:root {
-  --start-color: #ffffff;
-  --end-color: #e0e0e0;
-}
 
 * {
   box-sizing: border-box;
-}
-
-html, body {
   margin: 0;
   padding: 0;
+}
+html, body {
   height: 100%;
   font-family: 'Poppins', sans-serif;
 }
@@ -21,116 +14,106 @@ html, body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(135deg, var(--start-color), var(--end-color));
-  transition: background 0.5s ease;
 }
 
-/* Container */
-.container {
-  width: 90%;
-  max-width: 1200px;
-  margin: auto;
-}
-
-/* Navbar */
 .navbar {
   position: fixed;
   top: 0;
   width: 100%;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(12px);
-  background: rgba(255,255,255,0.15);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
 }
 .navbar-inner {
+  max-width: 1200px;
+  height: 100%;
+  margin: auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 64px;
+  padding: 0 24px;
 }
 .logo {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: #222;
 }
 .navbar-form {
   display: flex;
-  gap: 8px;
+  gap: 12px;
 }
 .navbar-form input {
-  padding: 8px 12px;
+  padding: 10px 16px;
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 8px;
-  width: 220px;
-  transition: box-shadow 0.3s;
-}
-.navbar-form input:focus {
-  box-shadow: 0 0 8px rgba(0,0,0,0.2);
-  outline: none;
+  width: 250px;
+  transition: width 0.3s ease;
 }
 .navbar-form button {
-  padding: 8px 16px;
+  padding: 10px 20px;
   font-size: 1rem;
   background: #222;
   color: #fff;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: background 0.3s ease;
 }
 .navbar-form button:hover {
   background: #444;
 }
 
-/* Main Hero */
-.main.hero {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.main {
   flex: 1;
-  padding-top: 64px; /* below navbar */
+  margin-top: 64px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 48px 24px;
 }
-.hero-content h1 {
-  font-size: clamp(2rem, 5vw, 3rem);
+
+.hero {
+  text-align: center;
   color: #222;
-  text-align: center;
-  margin-bottom: 1rem;
 }
-.hero-content p {
-  font-size: 1rem;
-  text-align: center;
+.hero h1 {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  margin-bottom: 16px;
+}
+.hero p {
+  font-size: 1.2rem;
   color: #555;
 }
 
-/* Results */
-.main.results {
-  padding-top: 64px;
-  padding-bottom: 2rem;
-}
-
-/* Playlist Grid */
 .playlist-grid {
   display: grid;
-  gap: 24px;
+  gap: 32px;
+  width: 100%;
+  max-width: 1200px;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  margin-top: 2rem;
+  animation: fadeIn 0.5s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* Track Card */
 .track-card {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(12px);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
   transition: transform 0.3s, box-shadow 0.3s;
 }
 .track-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+  transform: translateY(-8px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
 }
 .track-img {
   width: 100%;
@@ -142,74 +125,77 @@ html, body {
   flex: 1;
 }
 .track-info h3 {
-  font-size: 1.1rem;
-  margin-bottom: 4px;
+  font-size: 1.2rem;
+  margin-bottom: 6px;
   color: #222;
 }
 .track-info p {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: #444;
 }
-
-/* Actions */
 .track-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  border-top: 1px solid rgba(0,0,0,0.1);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 .track-actions button,
 .track-actions a {
-  padding: 6px 12px;
+  padding: 8px 16px;
   font-size: 0.9rem;
+  border: none;
   border-radius: 8px;
-  text-decoration: none;
   cursor: pointer;
-  transition: background 0.3s;
+  text-decoration: none;
+  transition: background 0.3s ease;
 }
 .track-actions button {
-  border: none;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0, 0, 0, 0.4);
   color: #fff;
 }
-.track-actions button:hover {
-  background: rgba(0,0,0,0.5);
-}
 .track-actions a {
-  background: rgba(255,255,255,0.8);
+  background: rgba(255, 255, 255, 0.8);
   color: #222;
 }
+.track-actions button:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
 .track-actions a:hover {
-  background: rgba(255,255,255,1);
+  background: rgba(255, 255, 255, 1);
 }
 
-/* Footer */
+.loader, .error {
+  font-size: 1.2rem;
+  color: #222;
+  text-align: center;
+}
+
 .footer {
   text-align: center;
   padding: 24px 0;
-  background: rgba(255,255,255,0.15);
-  font-size: 0.85rem;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 0.9rem;
   color: #222;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .navbar-inner {
     flex-direction: column;
-    height: auto;
     padding: 12px;
-    gap: 12px;
+  }
+  .navbar-form {
+    width: 100%;
+    justify-content: center;
   }
   .navbar-form input {
     width: 100%;
-    max-width: none;
+    max-width: 300px;
   }
-  .main.hero,
-  .main.results {
-    padding: 80px 16px 16px;
+  .main {
+    padding: 24px 12px;
   }
-  .container {
-    width: 95%;
+  .playlist-grid {
+    grid-template-columns: 1fr;
   }
 }
