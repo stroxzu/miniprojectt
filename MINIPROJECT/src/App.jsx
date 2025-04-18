@@ -18,9 +18,11 @@ export default function App() {
   const [playing, setPlaying] = useState(null);
   const audioRef = useRef();
 
-  // Update gradient theme on mood change
+  // Update CSS variables for gradient on mood change
   useEffect(() => {
-    setTheme(themes[mood.toLowerCase()] || themes.default);
+    const [start, end] = themes[mood.toLowerCase()] || themes.default;
+    document.documentElement.style.setProperty('--start-color', start);
+    document.documentElement.style.setProperty('--end-color', end);
   }, [mood]);
 
   // Fetch & display 6 songs
@@ -48,16 +50,13 @@ export default function App() {
     }
   };
 
+  const isHome = tracks.length === 0;
+
   return (
-    <div
-      className="app"
-      style={{
-        background: `linear-gradient(135deg, ${theme[0]}, ${theme[1]})`,
-      }}
-    >
-      {/* Navbar with persistent search */}
+    <div className="app">
+      {/* Navbar */}
       <header className="navbar">
-        <div className="navbar-inner">
+        <div className="container navbar-inner">
           <div className="logo">Adaptive Mood Playlist Generator</div>
           <form onSubmit={handleSubmit} className="navbar-form">
             <input
@@ -72,46 +71,50 @@ export default function App() {
         </div>
       </header>
 
-      {/* Main content area */}
-      <main className="main">
-        {tracks.length === 0 ? (
-          <div className="hero">
-            <h1>Discover Music by Mood</h1>
-            <p>Type a mood above & hit “Generate”</p>
-          </div>
-        ) : (
-          <div className="playlist-grid">
-            {tracks.map((track, i) => (
-              <div className="track-card" key={track.trackId}>
-                <img
-                  src={track.artworkUrl100.replace('100x100','300x300')}
-                  alt={track.trackName}
-                  className="track-img"
-                />
-                <div className="track-info">
-                  <h3>{track.trackName}</h3>
-                  <p>{track.artistName}</p>
+      {/* Main */}
+      <main className={`main ${isHome ? 'hero' : 'results'}`}>
+        <div className="container">
+          {isHome ? (
+            <div className="hero-content">
+              <h1>Discover Music by Mood</h1>
+              <p>Type your mood in the search bar above and hit “Generate”</p>
+            </div>
+          ) : (
+            <div className="playlist-grid">
+              {tracks.map((track, i) => (
+                <div className="track-card" key={track.trackId}>
+                  <img
+                    src={track.artworkUrl100.replace('100x100','300x300')}
+                    alt={track.trackName}
+                    className="track-img"
+                  />
+                  <div className="track-info">
+                    <h3>{track.trackName}</h3>
+                    <p>{track.artistName}</p>
+                  </div>
+                  <div className="track-actions">
+                    <button onClick={() => togglePlay(i)}>
+                      {playing === i ? '⏸ Pause' : '▶ Play'}
+                    </button>
+                    <a href={track.trackViewUrl} target="_blank" rel="noreferrer">
+                      Listen
+                    </a>
+                  </div>
                 </div>
-                <div className="track-actions">
-                  <button onClick={() => togglePlay(i)}>
-                    {playing === i ? '⏸ Pause' : '▶ Play'}
-                  </button>
-                  <a href={track.trackViewUrl} target="_blank" rel="noreferrer">
-                    Listen
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </main>
 
       <audio ref={audioRef} />
 
       {/* Footer */}
-      {tracks.length > 0 && (
+      {!isHome && (
         <footer className="footer">
-          <p>© 2025 Adaptive Mood Playlist Generator</p>
+          <div className="container">
+            <p>© 2025 Adaptive Mood Playlist Generator</p>
+          </div>
         </footer>
       )}
     </div>
