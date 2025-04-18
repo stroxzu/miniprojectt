@@ -1,13 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 const themes = {
   happy: ['#FFD700', '#FFA500'],
-  sad: ['#87CEEB', '#4682B4'],
-  chill: ['#32CD32', '#00FA9A'],
-  angry: ['#FF4500', '#8B0000'],
-  love: ['#FF69B4', '#FF1493'],
-  energetic: ['#9400D3', '#4B0082'],
   default: ['#4a90e2', '#50e3c2'],
 };
 
@@ -15,10 +10,8 @@ export default function App() {
   const [mood, setMood] = useState('');
   const [theme, setTheme] = useState(themes.default);
   const [tracks, setTracks] = useState([]);
-  const [playing, setPlaying] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const audioRef = useRef(new Audio());
 
   useEffect(() => {
     setTheme(themes[mood.toLowerCase()] || themes.default);
@@ -39,22 +32,9 @@ export default function App() {
         setTracks(data.results.slice(0, 6));
       }
     } catch (err) {
-      setError('Failed to fetch tracks. Please try again.');
+      setError('Failed to fetch tracks.');
     } finally {
       setLoading(false);
-      setPlaying(null);
-      audioRef.current?.pause();
-    }
-  };
-
-  const togglePlay = (idx) => {
-    if (playing === idx) {
-      audioRef.current.pause();
-      setPlaying(null);
-    } else {
-      audioRef.current.src = tracks[idx].previewUrl;
-      audioRef.current.play();
-      setPlaying(idx);
     }
   };
 
@@ -86,7 +66,7 @@ export default function App() {
           </div>
         ) : (
           <div className="playlist-grid">
-            {tracks.map((track, i) => (
+            {tracks.map((track) => (
               <div className="track-card" key={track.trackId}>
                 <img
                   src={track.artworkUrl100.replace('100x100', '300x300')}
@@ -98,9 +78,7 @@ export default function App() {
                   <p>{track.artistName}</p>
                 </div>
                 <div className="track-actions">
-                  <button onClick={() => togglePlay(i)}>
-                    {playing === i ? '⏸ Pause' : '▶ Play'}
-                  </button>
+                  <button>Play</button>
                   <a href={track.trackViewUrl} target="_blank" rel="noreferrer">
                     Listen
                   </a>
@@ -110,12 +88,6 @@ export default function App() {
           </div>
         )}
       </main>
-
-      {tracks.length > 0 && (
-        <footer className="footer">
-          <p>© 2025 Adaptive Mood Playlist</p>
-        </footer>
-      )}
     </div>
   );
 }
