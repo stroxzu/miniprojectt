@@ -2,13 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 
 const themes = {
-  happy: ['#FFD700', '#FFA500'],     // Bright yellow and orange
-  sad: ['#87CEEB', '#4682B4'],       // Soft blue and steel blue
-  chill: ['#32CD32', '#00FA9A'],     // Lime green and medium spring green
-  angry: ['#FF4500', '#8B0000'],     // Orange red and dark red
-  love: ['#FF69B4', '#FF1493'],      // Hot pink and deep pink
-  energetic: ['#9400D3', '#4B0082'], // Dark violet and indigo
-  default: ['#F0F0F0', '#D3D3D3'],   // Light gray gradients
+  happy: ['#FFD700', '#FFA500'],
+  sad: ['#87CEEB', '#4682B4'],
+  chill: ['#32CD32', '#00FA9A'],
+  angry: ['#FF4500', '#8B0000'],
+  love: ['#FF69B4', '#FF1493'],
+  energetic: ['#9400D3', '#4B0082'],
+  default: ['#4a90e2', '#50e3c2'],
 };
 
 export default function App() {
@@ -18,7 +18,7 @@ export default function App() {
   const [playing, setPlaying] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const audioRef = useRef();
+  const audioRef = useRef(new Audio());
 
   useEffect(() => {
     setTheme(themes[mood.toLowerCase()] || themes.default);
@@ -47,7 +47,7 @@ export default function App() {
     }
   };
 
-  const togglePlay = idx => {
+  const togglePlay = (idx) => {
     if (playing === idx) {
       audioRef.current.pause();
       setPlaying(null);
@@ -59,25 +59,18 @@ export default function App() {
   };
 
   return (
-    <div
-      className="app"
-      style={{
-        background: `linear-gradient(135deg, ${theme[0]}, ${theme[1]})`,
-      }}
-    >
+    <div className="app" style={{ '--theme-color1': theme[0], '--theme-color2': theme[1] }}>
       <header className="navbar">
-        <div className="navbar-inner">
-          <div className="logo">Adaptive Mood Playlist Generator</div>
-          <div className="navbar-form">
-            <input
-              type="text"
-              placeholder="Enter mood…"
-              value={mood}
-              onChange={e => setMood(e.target.value)}
-              required
-            />
-            <button onClick={handleGenerate}>Generate</button>
-          </div>
+        <div className="logo">Adaptive Mood Playlist</div>
+        <div className="navbar-form">
+          <input
+            type="text"
+            placeholder="Enter mood…"
+            value={mood}
+            onChange={(e) => setMood(e.target.value)}
+            required
+          />
+          <button onClick={handleGenerate}>Generate</button>
         </div>
       </header>
 
@@ -118,11 +111,9 @@ export default function App() {
         )}
       </main>
 
-      <audio ref={audioRef} />
-
       {tracks.length > 0 && (
         <footer className="footer">
-          <p>© 2025 Adaptive Mood Playlist Generator</p>
+          <p>© 2025 Adaptive Mood Playlist</p>
         </footer>
       )}
     </div>
