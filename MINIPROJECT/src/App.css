@@ -68,7 +68,7 @@ html, body {
 
 .main {
   flex: 1;
-  margin-top: 64px;
+  margin-top: 64px; /* Ensures content starts below the navbar */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -179,14 +179,17 @@ html, body {
   color: #222;
 }
 
+/* Responsive Design */
 @media (max-width: 768px) {
   .navbar-inner {
     flex-direction: column;
     padding: 12px;
+    align-items: flex-start;
   }
   .navbar-form {
     width: 100%;
     justify-content: center;
+    margin-top: 12px;
   }
   .navbar-form input {
     width: 100%;
@@ -197,5 +200,8 @@ html, body {
   }
   .playlist-grid {
     grid-template-columns: 1fr;
+  }
+  .track-card {
+    margin-bottom: 24px;
   }
 }

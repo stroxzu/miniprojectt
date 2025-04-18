@@ -67,7 +67,7 @@ export default function App() {
     >
       <header className="navbar">
         <div className="navbar-inner">
-          <div className="logo">MoodMix</div>
+          <div className="logo">Adaptive Mood Playlist Generator</div>
           <div className="navbar-form">
             <input
               type="text"
@@ -122,7 +122,7 @@ export default function App() {
 
       {tracks.length > 0 && (
         <footer className="footer">
-          <p>© 2025 MoodMix - Adaptive Mood Playlist Generator</p>
+          <p>© 2025 Adaptive Mood Playlist Generator</p>
         </footer>
       )}
     </div>
